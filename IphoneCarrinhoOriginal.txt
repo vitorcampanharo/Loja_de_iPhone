@@ -1,0 +1,362 @@
+internal class Program
+{
+    static void Main(string[] args)
+    {
+        Loja loja = new Loja();
+        int selectedOption = 1;
+
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("Loja - Menu:");
+            Console.Write("Escolha uma opção: ");
+            for (int i = 1; i <= 5; i++)
+            {
+                if (i == selectedOption)
+                {
+                    Console.Write("=> ");
+                }
+                else
+                {
+                    Console.Write("   ");
+                }
+                switch (i)
+                {
+                    case 1:
+
+                        Console.WriteLine("1. Cadastrar cliente");
+                        break;
+                    case 2:
+                        Console.WriteLine("2. Cadastrar iPhone");
+                        break;
+                    case 3:
+                        Console.WriteLine("3. Adicionar ao carrinho");
+                        break;
+                    case 4:
+                        Console.WriteLine("4. Finalizar compra");
+                        break;
+                    case 5:
+                        Console.WriteLine("5. Sair");
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+            // Verifica a tecla pressionada
+            if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                selectedOption = Math.Max(1, selectedOption - 1);
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                selectedOption = Math.Min(5, selectedOption + 1);
+            }
+            else if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                HandleMenuOption(selectedOption, loja);
+            }
+
+            void HandleMenuOption(int option, Loja lojaParam)
+            {
+                switch (option)
+                {
+                    case 1:
+                    Salario:
+                        Console.Write("Digite seu nome: ");
+                        string nome = Console.ReadLine();
+                        Console.Write("Digite seu salario: ");
+                        double salario;
+                        if (double.TryParse(Console.ReadLine(), out salario))
+                        {
+                            lojaParam.CadastrarCliente(nome, salario);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Erro: Salário deve ser um número válido.");
+                            goto Salario;
+                        }
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case 2:
+                    preco:
+                        Console.Write("Digite o nome do modelo: ");
+                        string nomeM = Console.ReadLine();
+                        Console.Write("Digite o preço: ");
+                        double preco;
+                        if (double.TryParse(Console.ReadLine(), out preco))
+                        {
+                            lojaParam.CadastrarIphone(nomeM, preco);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Erro: Preço deve ser um número válido.");
+                            goto preco;
+                        }
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case 3:
+                        foreach (var iphone in lojaParam.iphones)
+                        {
+                            Console.WriteLine(iphone.NomeM + " " + "R$ " + iphone.Preco);
+                        }
+                        foreach (var cliente in lojaParam.clientes)
+                        {
+                            Console.WriteLine(cliente.Nome + "; Salario: " + cliente.Salario);
+                        }
+                        Console.Write("Digite o nome do produto que deseja adicionar ao carrinho: ");
+                        string nomeIphoneParaAdicionar = Console.ReadLine();
+                        Console.Write("Digite seu nome: ");
+                        string nomeClienteParaAdicionar = Console.ReadLine();
+
+                        lojaParam.AdicionarNoCarrinho(nomeIphoneParaAdicionar, nomeClienteParaAdicionar);
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case 4:
+                        foreach (var iphone in lojaParam.CarrinhoDoCliente.Itens)
+                        {
+                            Console.WriteLine(iphone.NomeM + " " + "R$ " + iphone.Preco);
+                        }
+                        Console.Write("Digite seu nome para comprar do carrinho: ");
+                        string nomeClienteParaCompra = Console.ReadLine();
+
+                        bool compraBemSucedida = lojaParam.ComprarDoCarrinho(nomeClienteParaCompra);
+
+
+
+                        while (!compraBemSucedida)
+                        {
+                            Console.Write("Digite o nome do iPhone que deseja excluir do carrinho ou digite 'sair' para cancelar: ");
+                            string nomeIphoneParaExcluir = Console.ReadLine();
+
+                            if (nomeIphoneParaExcluir.Equals("sair", StringComparison.OrdinalIgnoreCase))
+                            {
+                                break;
+                            }
+
+                            var iphoneParaExcluir = lojaParam.CarrinhoDoCliente.Itens.FirstOrDefault(i => i.NomeM.Equals(nomeIphoneParaExcluir, StringComparison.OrdinalIgnoreCase));
+                            if (iphoneParaExcluir != null)
+                            {
+                                lojaParam.CarrinhoDoCliente.RemoverIphone(iphoneParaExcluir);
+                                Console.WriteLine("iPhone removido do carrinho com sucesso!");
+                                compraBemSucedida = lojaParam.ComprarDoCarrinho(nomeClienteParaCompra);
+                            }
+                            else
+                            {
+                                Console.WriteLine("iPhone não encontrado no carrinho. Tente novamente.");
+                            }
+                        }
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case 5:
+                        Console.WriteLine("Saindo do programa.");
+                        Environment.Exit(0);
+                        break;
+
+                }
+            }
+
+
+
+        }
+    }
+}
+
+internal class Cliente
+{
+    public string Nome { get; set; }
+    public double Salario { get; set; }
+
+    public Cliente(string nome, double salario)
+    {
+        Nome = nome;
+        Salario = salario;
+    }
+}
+
+internal class Iphone
+{
+    public string NomeM { get; set; }
+    public double Preco { get; set; }
+    public bool EstaComprado { get; set; }
+
+    public Iphone(string nomeM, double preco)
+    {
+        NomeM = nomeM;
+        Preco = preco;
+        EstaComprado = false;
+    }
+}
+
+internal class Carrinho
+{
+    public List<Iphone> Itens { get; set; }
+
+    public Carrinho()
+    {
+        Itens = new List<Iphone>();
+    }
+
+    public void AdicionarIphone(Iphone iphone)
+    {
+        Itens.Add(iphone);
+    }
+
+    public void RemoverIphone(Iphone iphone)
+    {
+        Itens.Remove(iphone);
+    }
+}
+
+internal class Loja
+{
+    public List<Iphone> iphones = new List<Iphone>();
+    public List<Cliente> clientes = new List<Cliente>();
+
+    public void CadastrarCliente(string nome, double salario)
+    {
+        if (salario < 0)
+        {
+            Console.WriteLine("Erro: Salário não pode ser negativo.");
+        }
+        else
+        {
+            Cliente cliente = new Cliente(nome, salario);
+            clientes.Add(cliente);
+            Console.WriteLine("Cliente cadastrado com sucesso!");
+        }
+    }
+    public void CadastrarIphone(string nomeM, double preco)
+    {
+        if (preco < 0)
+        {
+            Console.WriteLine("Erro: Preço não pode ser negativo.");
+        }
+        else
+        {
+            Iphone iphone = new Iphone(nomeM, preco);
+            iphones.Add(iphone);
+            Console.WriteLine("Iphone cadastrado com sucesso!");
+        }
+    }
+
+    public Carrinho CarrinhoDoCliente { get; set; } = new Carrinho();
+
+    public void AdicionarNoCarrinho(string nomeM, string nome)
+    {
+        Iphone iphone = BuscarIphonePorNome(nomeM);
+        Cliente cliente = BuscarClientePorNome(nome);
+
+        if (iphone == null)
+        {
+            Console.WriteLine("Erro: iPhone não encontrado.");
+            return;
+        }
+
+        if (cliente == null)
+        {
+            Console.WriteLine("Erro: Cliente não encontrado.");
+            return;
+        }
+
+        if (!iphone.EstaComprado)
+        {
+            if (cliente.Salario >= iphone.Preco)
+            {
+                CarrinhoDoCliente.AdicionarIphone(iphone);
+                Console.WriteLine("iPhone adicionado ao carrinho com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("Erro: Saldo insuficiente para comprar o iPhone.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Erro: iPhone já foi comprado anteriormente.");
+        }
+    }
+
+    public bool ComprarDoCarrinho(string nome)
+    {
+        Cliente cliente = BuscarClientePorNome(nome);
+
+        if (cliente == null)
+        {
+            Console.WriteLine("Erro: Cliente não encontrado.");
+            return false;
+        }
+
+        double valorTotal = CarrinhoDoCliente.Itens.Sum(iphone => iphone.Preco);//Sum: para fazer o somatorio dos preços dos iphones no carrinho. => é o metodo lambda, 
+
+
+        var itens = CarrinhoDoCliente.Itens;
+
+        if (itens.Count == 0)
+        {
+            Console.WriteLine("Íten já comprado");
+            return false;
+
+        }
+        else
+        {
+            if (cliente.Salario >= valorTotal)
+            {
+                foreach (var iphone in CarrinhoDoCliente.Itens)
+                {
+                    iphone.EstaComprado = true;
+                }
+
+                cliente.Salario -= valorTotal;
+                CarrinhoDoCliente.Itens.Clear();
+
+                Console.WriteLine("Compra realizada com sucesso!");
+                Console.WriteLine("Saldo restante: " + cliente.Salario);
+
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Erro: Saldo insuficiente para concluir a compra.");
+                return false;
+            }
+        }
+        
+    }
+
+    public Iphone BuscarIphonePorNome(string nomeM)
+    {
+        foreach (Iphone iphone in iphones)
+        {
+            if (iphone.NomeM.Equals(nomeM, StringComparison.OrdinalIgnoreCase))
+            {
+                return iphone;
+            }
+        }
+        return null;
+    }
+    public Cliente BuscarClientePorNome(string nome)
+    {
+        foreach (Cliente cliente in clientes)
+        {
+            if (cliente.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase))
+            {
+                return cliente;
+            }
+        }
+        return null;
+    }
+}
+
+Observe este código, está dividido em 5 arquivos mas faz parte do mesmo projeto. Preciso que você crie carrinhos de compra exclusivos para cada cliente cadastrado. Da forma atual, está um carrinho único para todos, e eu não quero isso. Quero um carrinho para cada cliente.

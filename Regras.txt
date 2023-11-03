@@ -1,0 +1,17 @@
+- Business:
+Onde fica as regras de negócio, verificações, validações e requisitos
+
+- Entities:
+É onde ocorre a criação via código do banco de dados, fica dentro de Domain
+
+- Data:
+É a representação do banco de dados
+
+- Web:
+Onde fica todo o front-end
+
+- Controller:
+Onde ficam as funcionalidades da tela, como botão de enviar, cadastrar, salvar, esses tipos de comandos .
+
+- Service:
+Onde irá ocorrer realmente a execução de todas as funcionalidades da controller.

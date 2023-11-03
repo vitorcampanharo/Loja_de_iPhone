@@ -1,0 +1,83 @@
+public bool ComprarDoCarrinho(string nome)
+{
+    Cliente cliente = BuscarClientePorNome(nome);
+    if (cliente == null)
+    {
+        Console.WriteLine("Erro: Cliente não encontrado.");
+        return false;
+    }
+    double valorTotal = cliente.CarrinhoDeCompras.Itens.Sum(iphone => iphone.Preco);//Sum: para fazer o somatorio dos preços dos iphones no carrinho. => é o metodo lambda, 
+    var itens = cliente.CarrinhoDeCompras.Itens;
+    if (itens.Count == 0)
+    {
+        Console.WriteLine("Erro: Carrinho inexistente ou pertencente a outro cliente");
+        return false;
+    }
+    else
+    {
+        if (cliente.Salario >= valorTotal)
+        {
+            foreach (var iphone in cliente.CarrinhoDeCompras.Itens)
+            {
+                iphone.EstaComprado = true;
+            }
+            cliente.Salario -= valorTotal;
+            CarrinhoDeCompras.Itens.Clear();
+            return true;
+        }
+        else
+        {
+            Console.WriteLine("Erro: Saldo insuficiente para concluir a compra.");
+            return false;
+        }
+    }
+
+}
+
+
+
+case 4:                          
+    Console.Write("Digite seu nome para comprar do carrinho: ");
+    string nomeClienteParaCompra = Console.ReadLine();
+    Cliente clienteParaCompra = lojaParam.BuscarClientePorNome(nomeClienteParaCompra);
+   
+    if (clienteParaCompra != null)
+    {
+        foreach (var iphone in clienteParaCompra.CarrinhoDeCompras.Itens)
+        {
+            Console.WriteLine(iphone.NomeM + " " + "R$ " + iphone.Preco);
+        }
+        bool compraBemSucedida = loja.ComprarDoCarrinho(nomeClienteParaCompra);
+        if (compraBemSucedida)
+        {
+            clienteParaCompra.CarrinhoDeCompras.Itens.Clear();
+            Console.WriteLine("Parabéns, compra realizada com sucesso");
+        }
+        else
+        {
+            Console.Write("Digite 'sair' para cancelar. Ou exclua um iPhone: ");
+            string nomeIphoneParaExcluir = Console.ReadLine();
+            if (nomeIphoneParaExcluir.Equals("sair", StringComparison.OrdinalIgnoreCase))
+            {
+                break;
+            }
+            var iphoneParaExcluir = clienteParaCompra.CarrinhoDeCompras.Itens.FirstOrDefault(i => i.NomeM.Equals(nomeIphoneParaExcluir, StringComparison.OrdinalIgnoreCase));
+            if (iphoneParaExcluir != null)
+            {
+                clienteParaCompra.CarrinhoDeCompras.RemoverIphone(iphoneParaExcluir);
+                Console.WriteLine("iPhone removido do carrinho com sucesso!");
+                Console.WriteLine("Tecle Enter para voltar ao menu");
+            }
+            else
+            {
+                Console.WriteLine("iPhone não encontrado no carrinho. Tente novamente.");
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine("Erro: Cliente não encontrado.");
+    }
+    Console.ReadLine();
+    Console.Clear();
+    break;

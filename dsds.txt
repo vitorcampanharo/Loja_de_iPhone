@@ -1,0 +1,182 @@
+internal class Cliente
+{
+    public string Nome { get; set; }
+    public double Salario { get; set; }
+    public Carrinho CarrinhoDeCompras { get; set; }
+
+    public Cliente(string nome, double salario)
+    {
+        Nome = nome;
+        Salario = salario;
+        CarrinhoDeCompras = new Carrinho();
+    }
+}
+
+internal class Iphone
+{
+    public string NomeM { get; set; }
+    public double Preco { get; set; }
+    public bool EstaComprado { get; set; }
+
+    public Iphone(string nomeM, double preco)
+    {
+        NomeM = nomeM;
+        Preco = preco;
+        EstaComprado = false;
+    }
+}
+
+public void AdicionarNoCarrinho(string nomeM, string nome)
+{
+    Iphone iphone = BuscarIphonePorNome(nomeM);
+    Cliente cliente = BuscarClientePorNome(nome);
+
+    if (iphone == null)
+    {
+        Console.WriteLine("Erro: iPhone não encontrado.");
+        return;
+    }
+
+    if (cliente == null)
+    {
+        Console.WriteLine("Erro: Cliente não encontrado.");
+        return;
+    }
+
+    if (!iphone.EstaComprado)
+    {
+        if (cliente.Salario >= iphone.Preco)
+        {
+            cliente.CarrinhoDeCompras.AdicionarIphone(iphone);
+            Console.WriteLine("iPhone adicionado ao carrinho com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Erro: Saldo insuficiente para comprar o iPhone.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Erro: iPhone já foi comprado anteriormente.");
+    }
+}
+
+public bool ComprarDoCarrinho(string nome)
+{
+    Cliente cliente = BuscarClientePorNome(nome);
+
+
+    if (cliente == null)
+    {
+        Console.WriteLine("Erro: Cliente não encontrado.");
+        return false;
+    }
+
+    double valorTotal = CarrinhoDeCompras.Itens.Sum(iphone => iphone.Preco);//Sum: para fazer o somatorio dos preços dos iphones no carrinho. => é o metodo lambda, 
+
+
+    var itens = CarrinhoDeCompras.Itens;
+
+
+    if (itens.Count == 0)
+    {
+        Console.WriteLine("Íten já comprado");
+        return false;
+
+    }
+    else
+    {
+        if (cliente.Salario >= valorTotal)
+        {
+            foreach (var iphone in CarrinhoDeCompras.Itens)
+            {
+                iphone.EstaComprado = true;
+            }
+
+            cliente.Salario -= valorTotal;
+            CarrinhoDeCompras.Itens.Clear();
+
+            Console.WriteLine("Compra realizada com sucesso!");
+            Console.WriteLine("Saldo restante: " + cliente.Salario);
+
+            return true;
+        }
+        else
+        {
+            Console.WriteLine("Erro: Saldo insuficiente para concluir a compra.");
+            return false;
+        }
+    }
+
+}
+
+Console.Write("Digite seu nome para comprar do carrinho: ");
+string nomeClienteParaCompra = Console.ReadLine();
+
+bool compraBemSucedida = lojaParam.ComprarDoCarrinho(nomeClienteParaCompra);
+
+
+
+while (!compraBemSucedida)
+{
+    Console.Write("Digite o nome do iPhone que deseja excluir do carrinho ou digite 'sair' para cancelar: ");
+    string nomeIphoneParaExcluir = Console.ReadLine();
+
+    if (nomeIphoneParaExcluir.Equals("sair", StringComparison.OrdinalIgnoreCase))
+    {
+        break;
+    }
+
+    var iphoneParaExcluir = lojaParam.CarrinhoDeCompras.Itens.FirstOrDefault(i => i.NomeM.Equals(nomeIphoneParaExcluir, StringComparison.OrdinalIgnoreCase));
+    if (iphoneParaExcluir != null)
+    {
+        lojaParam.CarrinhoDeCompras.RemoverIphone(iphoneParaExcluir);
+        Console.WriteLine("iPhone removido do carrinho com sucesso!");
+        compraBemSucedida = lojaParam.ComprarDoCarrinho(nomeClienteParaCompra);
+    }
+    else
+    {
+        Console.WriteLine("iPhone não encontrado no carrinho. Tente novamente.");
+    }
+}
+Console.ReadLine();
+Console.Clear();
+break;
+
+Esse é apenas um trecho de um código. Quero que cada cliente tenha um carrinho de compras exclusivo seu. No case 4, a compra só pode acontecer se o carrinho de compras estiver relacionado ao nome dele.
+
+No caso, os erros estão apenas na classe Program, no case 3 e 4. Vou te mandar o código:
+
+case 3:
+    foreach (var iphone in lojaParam.iphones)
+    {
+        Console.WriteLine(iphone.NomeM + " " + "R$ " + iphone.Preco);
+    }
+    foreach (var *cliente* in lojaParam.clientes)
+    {
+        Console.WriteLine(cliente.Nome + "; Salario: " + cliente.Salario);
+    }
+    Console.Write("Digite o nome do produto que deseja adicionar ao carrinho: ");
+    string nomeIphoneParaAdicionar = Console.ReadLine();
+    Console.Write("Digite seu nome: ");
+    string nomeClienteParaAdicionar = Console.ReadLine();
+
+    
+    lojaParam.AdicionarNoCarrinho(nomeIphoneParaAdicionar, nomeClienteParaAdicionar);
+    Console.ReadLine();
+    Console.Clear();
+    break;
+
+case 4:
+    Cliente cliente;
+    foreach (var iphone in *cliente*.CarrinhoDeCompras.Itens)
+    {
+        Console.WriteLine(iphone.NomeM + " " + "R$ " + iphone.Preco);
+    }
+    Console.Write("Digite seu nome para comprar do carrinho: ");
+    string nomeClienteParaCompra = Console.ReadLine();
+
+    bool compraBemSucedida = cliente.*ComprarDoCarrinho*(nomeClienteParaCompra);
+
+Os termos que coloquei entre asterisco (*) são os que estão dando erro. Erro CS0136, erro CS0165, erro CS1061, respectivamente.
+

@@ -1,0 +1,4 @@
+- Consertar o método ComprarDoCarrinho()
+- Não aceitar campo em branco
+- Poder excluir iPhones cadastrados na loja
+- Colocar função goto nos métodos que faltam
